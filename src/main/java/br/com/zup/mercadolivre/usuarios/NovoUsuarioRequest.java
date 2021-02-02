@@ -5,10 +5,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import br.com.zup.mercadolivre.validation.UniqueValue;
+
 public class NovoUsuarioRequest {
 
 	@Email
 	@NotBlank
+	@UniqueValue(domainClass = Usuario.class, fieldName = "login")
 	private String login;
 
 	@Size(min = 6)

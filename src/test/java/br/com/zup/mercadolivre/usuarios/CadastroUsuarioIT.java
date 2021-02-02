@@ -79,4 +79,23 @@ public class CadastroUsuarioIT {
 			.andExpect(jsonPath("$.fieldErrors[?(@.field == 'senha')].message").value("size must be between 6 and 2147483647"));		
 	}	
 	
+	@Test
+	public void naoDeveCadastrarUmUsuarioComEmailDuplicado() throws Exception {
+		NovoUsuarioRequest request = new NovoUsuarioRequest("user@email.com", "123456");
+		this.mockMvc.perform(
+				post("/usuarios")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))				
+			);
+		
+		this.mockMvc.perform(
+				post("/usuarios")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))				
+			)
+		.andDo(print())
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.fieldErrors[?(@.field=='login')].message").value("login ja existe."));		
+		
+	}
 }
