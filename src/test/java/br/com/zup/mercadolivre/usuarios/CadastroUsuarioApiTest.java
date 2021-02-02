@@ -5,24 +5,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@AutoConfigureMockMvc
 @SpringBootTest
-public class CadastroUsuarioIT {
-
+@AutoConfigureMockMvc
+@AutoConfigureTestDatabase
+public class CadastroUsuarioApiTest {
+	
 	@Autowired
 	private MockMvc mockMvc;
 	
 	@Autowired
 	private ObjectMapper objectMapper;	
+	
+	@PersistenceContext
+	private EntityManager em;
 	
 	@Test
 	public void deveCadastrarUmUsuario() throws Exception {
@@ -53,7 +62,7 @@ public class CadastroUsuarioIT {
 	
 	@Test
 	public void naoDeveCadastrarUmUsuarioComEmailInvalido() throws Exception {
-		NovoUsuarioRequest request = new NovoUsuarioRequest("user.com", "123456");
+		NovoUsuarioRequest request = new NovoUsuarioRequest("emailinvalido.com", "123456");
 		this.mockMvc.perform(
 				post("/usuarios")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -67,7 +76,7 @@ public class CadastroUsuarioIT {
 	
 	@Test
 	public void naoDeveCadastrarUmUsuarioComSenhaMenorQueSeisCaracteres() throws Exception {
-		NovoUsuarioRequest request = new NovoUsuarioRequest("user@email.com", "123");
+		NovoUsuarioRequest request = new NovoUsuarioRequest("senhamenorque6@email.com", "123");
 		this.mockMvc.perform(
 				post("/usuarios")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -78,15 +87,14 @@ public class CadastroUsuarioIT {
 			.andExpect(jsonPath("$.fieldErrors").isArray())
 			.andExpect(jsonPath("$.fieldErrors[?(@.field == 'senha')].message").value("size must be between 6 and 2147483647"));		
 	}	
-	
+
 	@Test
+	@Transactional
 	public void naoDeveCadastrarUmUsuarioComEmailDuplicado() throws Exception {
-		NovoUsuarioRequest request = new NovoUsuarioRequest("user@email.com", "123456");
-		this.mockMvc.perform(
-				post("/usuarios")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request))				
-			);
+		Usuario usuario = new Usuario("duplicado@email.com", "123456");
+		em.persist(usuario);		
+		
+		NovoUsuarioRequest request = new NovoUsuarioRequest("duplicado@email.com", "123456");
 		
 		this.mockMvc.perform(
 				post("/usuarios")

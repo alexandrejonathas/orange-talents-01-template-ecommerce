@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class CadastroCategoriaApiTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
-	@Autowired
+	@PersistenceContext
 	private EntityManager em;
 	
 	@Test

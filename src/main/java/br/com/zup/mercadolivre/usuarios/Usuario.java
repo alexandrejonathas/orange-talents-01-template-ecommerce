@@ -23,8 +23,8 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank
 	@Email
+	@NotBlank
 	@Column(unique = true)
 	private String login;
 	
