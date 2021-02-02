@@ -95,7 +95,7 @@ public class CadastroUsuarioIT {
 			)
 		.andDo(print())
 		.andExpect(status().isBadRequest())
-		.andExpect(jsonPath("$.fieldErrors[?(@.field=='login')].message").value("login ja existe."));		
+		.andExpect(jsonPath("$.fieldErrors[?(@.field=='login')].message").value("login ja existe"));		
 		
 	}
 }
