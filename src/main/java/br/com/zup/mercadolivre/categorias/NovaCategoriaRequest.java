@@ -1,7 +1,6 @@
 package br.com.zup.mercadolivre.categorias;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.validation.constraints.NotBlank;
 
 import br.com.zup.mercadolivre.validation.IdExists;
@@ -38,15 +37,5 @@ public class NovaCategoriaRequest {
 		Categoria categoria = categoriaId == null ? null : em.find(Categoria.class, categoriaId);
 		return new Categoria(nome, categoria);
 	}
-
-	/*private Categoria getCategoria(EntityManager em, Long categoriaId) {
-		Categoria categoria = null;
-		if(categoriaId != null) {
-			Query query = em.createQuery("select c from Categoria c where c.id = :id");
-			query.setParameter("id", categoriaId);
-			categoria = (Categoria) query.getSingleResult();
-		}
-		return categoria;
-	}*/
 
 }
