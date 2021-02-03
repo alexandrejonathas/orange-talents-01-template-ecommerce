@@ -1,6 +1,7 @@
 package br.com.zup.mercadolivre.produtos;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import br.com.zup.mercadolivre.caracteristicas.Caracteristica;
 import br.com.zup.mercadolivre.caracteristicas.CaractesticasProdutoRequest;
@@ -53,6 +56,12 @@ public class Produto {
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
 	private List<Caracteristica> caracteristicas;
 	
+	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
+	private List<Foto> fotos = new ArrayList<>();
+	
+	@Deprecated
+	public Produto() {}
+	
 	public Produto(@NotBlank String nome, @NotNull BigDecimal valor, @NotNull @Size(min = 0) Integer quantidade,
 			@NotBlank @Size(max = 1000) String descricao, Usuario usuario, Categoria categoria,
 			List<CaractesticasProdutoRequest> caracteristicas) {
@@ -69,6 +78,20 @@ public class Produto {
 		return caracteristicas.stream()
 				.map(c -> new Caracteristica(c.getNome(), c.getDescricao(), this))
 				.collect(Collectors.toList());
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void buildFotos(MultipartFile[] files) {
+		for(MultipartFile file : files) {
+			this.fotos.add(new Foto(this, file));
+		}
 	}
 	
 }

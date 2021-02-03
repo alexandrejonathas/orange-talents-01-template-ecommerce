@@ -1,7 +1,7 @@
 package br.com.zup.mercadolivre.databuilder;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.zup.mercadolivre.caracteristicas.CaractesticasProdutoRequest;
@@ -18,7 +18,7 @@ public class ProdutoBuilder {
 	private Categoria categoria;
 	private Usuario usuario;
 	
-	private List<CaractesticasProdutoRequest> caracteristicas = Collections.emptyList();
+	private List<CaractesticasProdutoRequest> caracteristicas = new ArrayList<>();
 	
 	public ProdutoBuilder comNome(String nome) {
 		this.nome = nome;
@@ -50,7 +50,7 @@ public class ProdutoBuilder {
 		return this;
 	}		
 	
-	public ProdutoBuilder comCararacteristicas(CaractesticasProdutoRequest caracteristica) {
+	public ProdutoBuilder comCaracteristica(CaractesticasProdutoRequest caracteristica) {
 		caracteristicas.add(caracteristica);
 		return this;
 	}
@@ -58,5 +58,6 @@ public class ProdutoBuilder {
 	public Produto constroi() {
 		return new Produto(nome, valor, quantidade, descricao, usuario, categoria, caracteristicas);
 	}
+
 	
 }

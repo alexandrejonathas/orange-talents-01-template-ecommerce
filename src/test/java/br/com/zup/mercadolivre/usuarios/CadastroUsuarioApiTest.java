@@ -1,5 +1,7 @@
 package br.com.zup.mercadolivre.usuarios;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -7,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,15 @@ public class CadastroUsuarioApiTest {
 			)
 			.andDo(print())
 			.andExpect(status().isOk());
+		
+		Query query = em.createQuery("select u from Usuario u where u.login = :login");
+		query.setParameter("login", "user@email.com");
+		
+		Usuario usuario = (Usuario) query.getSingleResult();
+		
+		assertNotNull(usuario);
+		assertEquals("user@email.com", usuario.getLogin());
+		assertNotNull(usuario.getSenha());
 	}
 	
 	@Test

@@ -1,6 +1,8 @@
 package br.com.zup.mercadolivre.produtos;
 
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -11,6 +13,7 @@ import java.util.Collections;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +100,15 @@ public class CadastroProdutoApiTest {
 				.header("Authorization", "Bearer " + token).content(objectMapper.writeValueAsString(request)))
 				.andDo(print())
 				.andExpect(status().isOk());
+		
+		Query query = em.createQuery("select p from Produto p where p.nome = :nome");
+		query.setParameter("nome", "Produto 1");
+		
+		Produto produto = (Produto) query.getSingleResult();
+		
+		assertNotNull(produto);
+		assertEquals("Produto 1", produto.getNome());		
+		
 	}
 	
 	@Transactional

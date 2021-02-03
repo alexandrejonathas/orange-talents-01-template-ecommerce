@@ -1,5 +1,7 @@
 package br.com.zup.mercadolivre.categorias;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -7,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,14 @@ public class CadastroCategoriaApiTest {
 			)
 			.andDo(print())
 			.andExpect(status().isOk());
+		
+		Query query = em.createQuery("select c from Categoria c where c.nome = :nome");
+		query.setParameter("nome", "Tecnologia");
+		
+		Categoria categoria = (Categoria) query.getSingleResult();
+		
+		assertNotNull(categoria);
+		assertEquals("Tecnologia", categoria.getNome());		
 	}
 	
 	@Test
@@ -103,6 +114,16 @@ public class CadastroCategoriaApiTest {
 			)
 			.andDo(print())
 			.andExpect(status().isOk());
+		
+		Query query = em.createQuery("select c from Categoria c where c.nome = :nome");
+		query.setParameter("nome", "Celulares");
+		
+		Categoria categoriaSalva = (Categoria) query.getSingleResult();
+		
+		assertNotNull(categoriaSalva);
+		assertEquals("Celulares", categoriaSalva.getNome());
+		assertNotNull(categoriaSalva.getCategoria());
+		
 	}	
 	
 }
