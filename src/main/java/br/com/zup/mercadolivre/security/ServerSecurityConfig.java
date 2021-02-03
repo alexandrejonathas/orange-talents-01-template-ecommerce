@@ -48,7 +48,6 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.antMatchers("/produtos").authenticated()
 				.antMatchers("/**").permitAll()
 			.and()
 				.csrf()

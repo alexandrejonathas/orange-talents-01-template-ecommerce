@@ -57,8 +57,17 @@ public class CadastroProdutoApiTest {
 	public void deveObterUmStatus403() throws Exception {
 		Categoria categoria = getCategoria();
 		
-		NovoProdutoRequest request = new NovoProdutoRequestBuilder().comNome("Produto 1").comValor("29.90")
-				.comQuantidade(10).comDescricao("Produto novo").comCategoriaId(categoria.getId()).constroi();
+		var caracteristicas = new ArrayList<CaractesticasProdutoRequest>();
+		caracteristicas.add(new CaractesticasProdutoRequest("Marca", "Marca 1"));
+		caracteristicas.add(new CaractesticasProdutoRequest("Modelo", "Modelo 1"));
+		caracteristicas.add(new CaractesticasProdutoRequest("Cor", "Cor 1"));
+		
+		NovoProdutoRequest request = new NovoProdutoRequestBuilder()
+				.comNome("Produto 1").comValor("29.90")
+				.comQuantidade(10).comDescricao("Produto novo")
+				.comCategoriaId(categoria.getId())
+				.comCaracteristicas(caracteristicas)
+				.constroi();
 
 		mockMvc.perform(post("/produtos").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))).andExpect(status().isForbidden());
