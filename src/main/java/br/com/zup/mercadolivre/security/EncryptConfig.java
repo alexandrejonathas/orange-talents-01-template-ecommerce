@@ -1,4 +1,4 @@
-package br.com.zup.mercadolivre.config.security;
+package br.com.zup.mercadolivre.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

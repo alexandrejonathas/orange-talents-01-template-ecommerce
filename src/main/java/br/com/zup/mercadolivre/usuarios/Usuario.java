@@ -47,5 +47,17 @@ public class Usuario {
 	public String toString() {
 		return "Usuario [id="+id+", login="+login+", senha="+senha+"]";
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
 	
 }
