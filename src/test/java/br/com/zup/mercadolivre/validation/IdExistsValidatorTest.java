@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Collections;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -42,14 +44,14 @@ public class IdExistsValidatorTest {
 	
 	@Test
 	public void deveRetornarTrueQuandoIdExistir() {
-		when(query.getFirstResult()).thenReturn(1);
+		when(query.getResultList()).thenReturn(Arrays.asList(new DomainClass()));
 		assertTrue(idExistsValidator.isValid(domainClassId, null));
 		Mockito.verify(query).setParameter("id", domainClassId);
 	}
 	
 	@Test
 	public void deveRetornarFalseQuandoIdNaoExistir() {
-		when(query.getFirstResult()).thenReturn(0);
+		when(query.getResultList()).thenReturn(Collections.emptyList());
 		assertFalse(idExistsValidator.isValid(domainClassId, null));
 		Mockito.verify(query).setParameter("id", domainClassId);
 	}	

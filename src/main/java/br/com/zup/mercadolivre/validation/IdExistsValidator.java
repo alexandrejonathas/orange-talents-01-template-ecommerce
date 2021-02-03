@@ -25,7 +25,7 @@ public class IdExistsValidator implements ConstraintValidator<IdExists, Long> {
 		}
 		Query query = em.createQuery("select 1 from "+domainClass.getName()+" where id = :id");
 		query.setParameter("id", id);
-		return query.getFirstResult() > 0;
+		return query.getResultList().size() > 0;
 	}
 
 }
