@@ -23,9 +23,10 @@ public class ProdutoController {
 	
 	@Transactional
 	@PostMapping("/produtos")
-	public void cadastra(@RequestBody @Valid NovoProdutoRequest request) {
+	public String cadastra(@RequestBody @Valid NovoProdutoRequest request) {
 		Produto produto = request.toModel(em, mlSecurity.getUserId());
 		em.persist(produto);
+		return produto.toString();
 	}
 	
 }

@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.zup.mercadolivre.autenticacao.AutenticacaoRequest;
 import br.com.zup.mercadolivre.usuarios.Usuario;
 
 @SpringBootTest
