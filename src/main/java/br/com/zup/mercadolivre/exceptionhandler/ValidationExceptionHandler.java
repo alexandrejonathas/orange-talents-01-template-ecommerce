@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,6 +28,15 @@ public class ValidationExceptionHandler {
 
 		return buildValidationErrorOutput(globalErrors, fieldErrors);
 	}
+	
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(BindException.class)
+	public ValidationErrorOutput handleMethodArgumentNotValidException(BindException ex) {
+		var globalErrors = ex.getBindingResult().getGlobalErrors();
+		var fieldErrors = ex.getBindingResult().getFieldErrors();
+
+		return buildValidationErrorOutput(globalErrors, fieldErrors);
+	}	
 	
 	private ValidationErrorOutput buildValidationErrorOutput(List<ObjectError> globalErrors, 
 			List<FieldError> fieldErrors) {

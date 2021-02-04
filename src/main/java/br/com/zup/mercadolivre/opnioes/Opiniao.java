@@ -1,5 +1,6 @@
 package br.com.zup.mercadolivre.opnioes;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +28,8 @@ public class Opiniao {
 	@NotBlank 
 	private String titulo;
 	
-	@NotBlank @Size(max = 500) 
+	@NotBlank @Size(max = 500)
+	@Column(columnDefinition = "text") 
 	private String descricao;
 	
 	@NotNull @Min(1) @Max(5) 

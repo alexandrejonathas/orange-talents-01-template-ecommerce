@@ -26,11 +26,12 @@ import br.com.zup.mercadolivre.caracteristicas.CaractesticasProdutoRequest;
 import br.com.zup.mercadolivre.categorias.Categoria;
 import br.com.zup.mercadolivre.opnioes.NovaOpiniaoProdutoRequest;
 import br.com.zup.mercadolivre.opnioes.Opiniao;
+import br.com.zup.mercadolivre.perguntas.Pergunta;
 import br.com.zup.mercadolivre.usuarios.Usuario;
 
 @Entity
 @Table(name = "produtos")
-public class Produto {
+public class Produto{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,9 +51,11 @@ public class Produto {
 	@Size(max = 1000) 
 	private String descricao; 
 	
+	@NotNull
 	@ManyToOne
 	private Usuario usuario;
 	
+	@NotNull
 	@ManyToOne
 	private Categoria categoria;
 
@@ -65,6 +68,10 @@ public class Produto {
 	@Valid
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
 	private List<Opiniao> opnioes = new ArrayList<>();
+	
+	@Valid
+	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
+	private List<Pergunta> perguntas = new ArrayList<>();	
 	
 	@Deprecated
 	public Produto() {}
@@ -142,6 +149,7 @@ public class Produto {
 		return caracteristicas.stream()
 				.map(c -> c.toModel(this))
 				.collect(Collectors.toList());
-	}	
+	}
+	
 	
 }

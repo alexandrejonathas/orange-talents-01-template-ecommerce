@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.zup.mercadolivre.usuarios.Usuario;
 
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
@@ -34,13 +35,15 @@ public class AutenticacaoApiTest {
 	@PersistenceContext
 	private EntityManager em;	
 	
-	@Transactional
 	@Test
 	public void deveObterUmToken() throws Exception {
-		Usuario usuario = new Usuario("user@email.com", "123456");
+		String email = "user@email.com";
+		String senha = "123456";
+		
+		Usuario usuario = new Usuario(email, senha);
 		em.persist(usuario);
 		
-		AutenticacaoRequest request = new AutenticacaoRequest("user@email.com", "123456");
+		AutenticacaoRequest request = new AutenticacaoRequest(email, senha);
 		
 		mockMvc.perform(
 				post("/auth")

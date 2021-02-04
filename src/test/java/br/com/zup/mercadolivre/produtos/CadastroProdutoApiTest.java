@@ -31,10 +31,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.zup.mercadolivre.autenticacao.AutenticacaoRequest;
 import br.com.zup.mercadolivre.caracteristicas.CaractesticasProdutoRequest;
 import br.com.zup.mercadolivre.categorias.Categoria;
+import br.com.zup.mercadolivre.databuilder.CategoriaBuilder;
 import br.com.zup.mercadolivre.databuilder.NovoProdutoRequestBuilder;
 import br.com.zup.mercadolivre.security.TokenService;
 import br.com.zup.mercadolivre.usuarios.Usuario;
 
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
@@ -55,10 +57,10 @@ public class CadastroProdutoApiTest {
 	@Autowired
 	private TokenService tokenService;
 
-	@Transactional
 	@Test
 	public void deveObterUmStatus403() throws Exception {
-		Categoria categoria = getCategoria();
+		Categoria categoria = new CategoriaBuilder().comNome("Categoria 1").constroi();
+		em.persist(categoria);
 		
 		var caracteristicas = new ArrayList<CaractesticasProdutoRequest>();
 		caracteristicas.add(new CaractesticasProdutoRequest("Marca", "Marca 1"));
@@ -76,12 +78,12 @@ public class CadastroProdutoApiTest {
 				.content(objectMapper.writeValueAsString(request))).andExpect(status().isForbidden());
 	}
 
-	@Transactional
 	@Test
 	public void deveCadastrarUmProduto() throws Exception {
 
-		Categoria categoria = getCategoria();
-
+		Categoria categoria = new CategoriaBuilder().comNome("Categoria 1").constroi();
+		em.persist(categoria);
+		
 		var caracteristicas = new ArrayList<CaractesticasProdutoRequest>();
 		caracteristicas.add(new CaractesticasProdutoRequest("Marca", "Marca 1"));
 		caracteristicas.add(new CaractesticasProdutoRequest("Modelo", "Modelo 1"));
@@ -111,7 +113,6 @@ public class CadastroProdutoApiTest {
 		
 	}
 	
-	@Transactional
 	@Test
 	public void naoDeveCadastrarUmProdutoComDadosInvalidos() throws Exception {
 
@@ -131,11 +132,11 @@ public class CadastroProdutoApiTest {
 				.andExpect(jsonPath("$.fieldErrors[?(@.field == 'categoriaId')].message").value("must not be null"));
 	}
 	
-	@Transactional
 	@Test
 	public void naoDeveCadastrarUmProdutoComCaracteristicasNull() throws Exception {
 
-		Categoria categoria = getCategoria();
+		Categoria categoria = new CategoriaBuilder().comNome("Categoria 1").constroi();
+		em.persist(categoria);
 		
 		NovoProdutoRequest request = new NovoProdutoRequestBuilder()
 				.comNome("Produto 1").comValor("29.90")
@@ -153,11 +154,11 @@ public class CadastroProdutoApiTest {
 				.andExpect(jsonPath("$.fieldErrors..message", hasItem("must not be null")));
 	}
 	
-	@Transactional
 	@Test
 	public void naoDeveCadastrarUmProdutoComCaracteristicasVazia() throws Exception {
 
-		Categoria categoria = getCategoria();
+		Categoria categoria = new CategoriaBuilder().comNome("Categoria 1").constroi();
+		em.persist(categoria);
 		
 		NovoProdutoRequest request = new NovoProdutoRequestBuilder()
 				.comNome("Produto 1").comValor("29.90")
@@ -176,11 +177,11 @@ public class CadastroProdutoApiTest {
 				.andExpect(jsonPath("$.fieldErrors..message", hasItem("size must be between 3 and 2147483647")));
 	}	
 	
-	@Transactional
 	@Test
 	public void naoDeveCadastrarUmProdutoComCaracteristicasInvalidas() throws Exception {
 
-		Categoria categoria = getCategoria();
+		Categoria categoria = new CategoriaBuilder().comNome("Categoria 1").constroi();
+		em.persist(categoria);
 
 		var caracteristicas = new ArrayList<CaractesticasProdutoRequest>();
 		caracteristicas.add(new CaractesticasProdutoRequest("", "Marca 1"));
@@ -201,13 +202,7 @@ public class CadastroProdutoApiTest {
 				.andDo(print())
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.fieldErrors..message", hasItem("must not be blank")));
-	}	
-
-	private Categoria getCategoria() {
-		Categoria categoria = new Categoria("Categoria 1");
-		em.persist(categoria);
-		return categoria;
-	}	
+	}		
 
 	private String getToken() {
 		Usuario usuario = new Usuario("user@email.com", "123456");
