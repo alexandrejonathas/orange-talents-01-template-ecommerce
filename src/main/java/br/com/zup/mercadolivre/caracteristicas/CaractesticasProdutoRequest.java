@@ -2,6 +2,8 @@ package br.com.zup.mercadolivre.caracteristicas;
 
 import javax.validation.constraints.NotBlank;
 
+import br.com.zup.mercadolivre.produtos.Produto;
+
 public class CaractesticasProdutoRequest {
 
 	@NotBlank
@@ -23,4 +25,8 @@ public class CaractesticasProdutoRequest {
 		return descricao;
 	}
 
+	public Caracteristica toModel(Produto produto) {
+		return new Caracteristica(nome, descricao, produto);
+	}
+	
 }

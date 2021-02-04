@@ -1,7 +1,9 @@
 package br.com.zup.mercadolivre.produtos;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
@@ -81,6 +83,17 @@ public class NovoProdutoRequest {
 		Categoria categoria = em.find(Categoria.class, categoriaId);
 		
 		return new Produto(nome, valor, quantidade, descricao, usuario, categoria, caracteristicas);
+	}
+
+	public Set<String> bucaNomeCaracteristicasIguais() {
+		Set<String> caracteristicasIguais = new HashSet<>();
+		Set<String> nomesIguais = new HashSet<>();
+		for(CaractesticasProdutoRequest c : caracteristicas) {
+			if(!caracteristicasIguais.add(c.getNome())) {
+				nomesIguais.add(c.getNome());
+			}
+		}
+		return nomesIguais;
 	}
 	
 }

@@ -6,7 +6,7 @@ import javax.persistence.Query;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class IdExistsValidator implements ConstraintValidator<IdExists, Long> {
+public class IdExistsValidation implements ConstraintValidator<IdExists, Long> {
 
 	@PersistenceContext
 	private EntityManager em;

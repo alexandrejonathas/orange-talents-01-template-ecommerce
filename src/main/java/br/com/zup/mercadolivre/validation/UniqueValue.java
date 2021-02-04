@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Constraint(validatedBy = UniqueValueValidator.class)
+@Constraint(validatedBy = UniqueValueValidation.class)
 @Retention(RUNTIME)
 @Target(FIELD)
 public @interface UniqueValue {

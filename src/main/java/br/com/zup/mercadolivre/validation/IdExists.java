@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Constraint(validatedBy = IdExistsValidator.class)
+@Constraint(validatedBy = IdExistsValidation.class)
 @Retention(RUNTIME)
 @Target(FIELD)
 public @interface IdExists {

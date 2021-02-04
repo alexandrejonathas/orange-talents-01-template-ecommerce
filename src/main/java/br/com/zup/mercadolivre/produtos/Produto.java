@@ -17,7 +17,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.Assert;
 
 import br.com.zup.mercadolivre.caracteristicas.Caracteristica;
 import br.com.zup.mercadolivre.caracteristicas.CaractesticasProdutoRequest;
@@ -71,11 +71,14 @@ public class Produto {
 		this.usuario = usuario;
 		this.categoria = categoria;
 		this.caracteristicas = buildCaracteristicas(caracteristicas);
+		
+		Assert.isTrue(caracteristicas.size() >= 3, "O produto precisa ter no mínimo 3 caracteristicas");
+		
 	}	
 
 	private List<Caracteristica> buildCaracteristicas(List<CaractesticasProdutoRequest> caracteristicas) {
 		return caracteristicas.stream()
-				.map(c -> new Caracteristica(c.getNome(), c.getDescricao(), this))
+				.map(c -> c.toModel(this))
 				.collect(Collectors.toList());
 	}
 
@@ -87,9 +90,9 @@ public class Produto {
 		return nome;
 	}
 
-	public void buildFotos(List<MultipartFile> files) {
-		this.fotos = files.stream().map(f -> new Foto(this, f))
-				.collect(Collectors.toList());
+	public void associaLinks(List<String> links) {
+		this.fotos = links.stream().map(l -> new Foto(this, l))
+				.collect(Collectors.toList());		
 	}
 	
 }

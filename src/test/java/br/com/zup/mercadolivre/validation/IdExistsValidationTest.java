@@ -20,51 +20,48 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * Classe desenvolvida com o apoio do Tiago de Freitas
- */
 @ExtendWith(MockitoExtension.class)
-public class UniqueValueValidatorTest {
-	
-	@Mock
-	private EntityManager em;
+public class IdExistsValidationTest {
 
 	@Mock
-	private Query query; 
+	private EntityManager em;
+	
+	@Mock
+	private Query query;
 	
 	@InjectMocks
-	private UniqueValueValidator uniqueValueValidator;
+	private IdExistsValidation idExistsValidator;
 	
-	private String fieldValue = "aaaaa";
+	private Long domainClassId = 1L;
 	
 	@BeforeEach
-	public void setUp() {
-		var uniqueValue = getUniqueValue();
-		uniqueValueValidator.initialize(uniqueValue);
-		when(em.createQuery("select 1 from "+uniqueValue.domainClass().getName()+" where "+uniqueValue.fieldName()+"=:value"))
-		.thenReturn(query);
+	public void setUp() {		
+		var idExists = getIdExists();
+		idExistsValidator.initialize(idExists);
+		when(em.createQuery("select 1 from "+idExists.domainClass().getName()+" where id = :id"))
+			.thenReturn(query);
 	}
 	
 	@Test
-	public void deveRetornarTrueAoChegarValorInexistente() {
-		when(query.getResultList()).thenReturn(Collections.emptyList());
-		assertTrue(uniqueValueValidator.isValid(fieldValue, null));
-		Mockito.verify(query).setParameter("value", fieldValue);
-	}
-	
-	@Test
-	public void deveRetornarFalseAoChegarValorExistente() {
+	public void deveRetornarTrueQuandoIdExistir() {
 		when(query.getResultList()).thenReturn(Arrays.asList(new DomainClass()));
-		assertFalse(uniqueValueValidator.isValid(fieldValue, null));
-		Mockito.verify(query).setParameter("value", fieldValue);
+		assertTrue(idExistsValidator.isValid(domainClassId, null));
+		Mockito.verify(query).setParameter("id", domainClassId);
+	}
+	
+	@Test
+	public void deveRetornarFalseQuandoIdNaoExistir() {
+		when(query.getResultList()).thenReturn(Collections.emptyList());
+		assertFalse(idExistsValidator.isValid(domainClassId, null));
+		Mockito.verify(query).setParameter("id", domainClassId);
 	}	
 	
 	class DomainClass {
 		
 	}
-
-	private UniqueValue getUniqueValue() {
-		return new UniqueValue() {
+	
+	private IdExists getIdExists() {
+		return new IdExists() {
 			
 			@Override
 			public Class<? extends Annotation> annotationType() {
@@ -84,11 +81,6 @@ public class UniqueValueValidatorTest {
 			@Override
 			public Class<?>[] groups() {
 				return null;
-			}
-			
-			@Override
-			public String fieldName() {
-				return "nome";
 			}
 			
 			@Override

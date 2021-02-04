@@ -7,7 +7,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.util.Assert;
 
-public class UniqueValueValidator implements ConstraintValidator<UniqueValue, Object>{
+public class UniqueValueValidation implements ConstraintValidator<UniqueValue, Object>{
 
 	@PersistenceContext
 	private EntityManager em;

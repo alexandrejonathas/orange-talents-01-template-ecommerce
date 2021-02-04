@@ -20,48 +20,51 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Classe desenvolvida com o apoio do Tiago de Freitas
+ */
 @ExtendWith(MockitoExtension.class)
-public class IdExistsValidatorTest {
-
+public class UniqueValueValidationTest {
+	
 	@Mock
 	private EntityManager em;
-	
+
 	@Mock
-	private Query query;
+	private Query query; 
 	
 	@InjectMocks
-	private IdExistsValidator idExistsValidator;
+	private UniqueValueValidation uniqueValueValidator;
 	
-	private Long domainClassId = 1L;
+	private String fieldValue = "aaaaa";
 	
 	@BeforeEach
-	public void setUp() {		
-		var idExists = getIdExists();
-		idExistsValidator.initialize(idExists);
-		when(em.createQuery("select 1 from "+idExists.domainClass().getName()+" where id = :id"))
-			.thenReturn(query);
+	public void setUp() {
+		var uniqueValue = getUniqueValue();
+		uniqueValueValidator.initialize(uniqueValue);
+		when(em.createQuery("select 1 from "+uniqueValue.domainClass().getName()+" where "+uniqueValue.fieldName()+"=:value"))
+		.thenReturn(query);
 	}
 	
 	@Test
-	public void deveRetornarTrueQuandoIdExistir() {
-		when(query.getResultList()).thenReturn(Arrays.asList(new DomainClass()));
-		assertTrue(idExistsValidator.isValid(domainClassId, null));
-		Mockito.verify(query).setParameter("id", domainClassId);
-	}
-	
-	@Test
-	public void deveRetornarFalseQuandoIdNaoExistir() {
+	public void deveRetornarTrueAoChegarValorInexistente() {
 		when(query.getResultList()).thenReturn(Collections.emptyList());
-		assertFalse(idExistsValidator.isValid(domainClassId, null));
-		Mockito.verify(query).setParameter("id", domainClassId);
+		assertTrue(uniqueValueValidator.isValid(fieldValue, null));
+		Mockito.verify(query).setParameter("value", fieldValue);
+	}
+	
+	@Test
+	public void deveRetornarFalseAoChegarValorExistente() {
+		when(query.getResultList()).thenReturn(Arrays.asList(new DomainClass()));
+		assertFalse(uniqueValueValidator.isValid(fieldValue, null));
+		Mockito.verify(query).setParameter("value", fieldValue);
 	}	
 	
 	class DomainClass {
 		
 	}
-	
-	private IdExists getIdExists() {
-		return new IdExists() {
+
+	private UniqueValue getUniqueValue() {
+		return new UniqueValue() {
 			
 			@Override
 			public Class<? extends Annotation> annotationType() {
@@ -81,6 +84,11 @@ public class IdExistsValidatorTest {
 			@Override
 			public Class<?>[] groups() {
 				return null;
+			}
+			
+			@Override
+			public String fieldName() {
+				return "nome";
 			}
 			
 			@Override
