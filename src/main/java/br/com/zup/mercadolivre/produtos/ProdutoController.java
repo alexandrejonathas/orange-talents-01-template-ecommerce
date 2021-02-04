@@ -36,7 +36,7 @@ public class ProdutoController {
 	
 	@Transactional
 	@CheckSecurity.Produtos.pertenceAoUsuario
-	@PutMapping("/produtos/{id}/fotos")
+	@PostMapping("/produtos/{id}/fotos")
 	public ResponseEntity<?> cadastraFotos(@PathVariable Long id, @Valid FotosProdutoRequest request) {		
 		Produto produto = em.find(Produto.class, id);
 		

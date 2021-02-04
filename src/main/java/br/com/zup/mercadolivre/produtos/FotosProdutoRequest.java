@@ -1,5 +1,7 @@
 package br.com.zup.mercadolivre.produtos;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -12,14 +14,14 @@ public class FotosProdutoRequest {
 
 	@NotNull
 	@Size(min = 1)
-	private MultipartFile[] files;
+	private List<MultipartFile> files;
 
 	@JsonCreator(mode = Mode.PROPERTIES)
-	public FotosProdutoRequest(MultipartFile[] files) {
+	public FotosProdutoRequest(List<MultipartFile> files) {
 		this.files = files;
 	}
 	
-	public MultipartFile[] getFiles() {
+	public List<MultipartFile> getFiles() {
 		return files;
 	}
 	

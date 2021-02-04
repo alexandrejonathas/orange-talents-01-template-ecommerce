@@ -32,7 +32,7 @@ public class Foto {
 	
 	public Foto(Produto produto, MultipartFile file) {
 		this.nome = UUID.randomUUID().toString() + "_" +file.getOriginalFilename();
-		this.path = "c:\\fotos\\"+this.nome;
+		this.path = "http://localhost:8080/fotos/"+this.nome;
 		this.produto = produto;
 	}
 	

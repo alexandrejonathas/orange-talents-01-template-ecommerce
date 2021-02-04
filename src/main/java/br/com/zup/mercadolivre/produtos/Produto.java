@@ -1,7 +1,6 @@
 package br.com.zup.mercadolivre.produtos;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +56,7 @@ public class Produto {
 	private List<Caracteristica> caracteristicas;
 	
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
-	private List<Foto> fotos = new ArrayList<>();
+	private List<Foto> fotos;
 	
 	@Deprecated
 	public Produto() {}
@@ -88,10 +87,9 @@ public class Produto {
 		return nome;
 	}
 
-	public void buildFotos(MultipartFile[] files) {
-		for(MultipartFile file : files) {
-			this.fotos.add(new Foto(this, file));
-		}
+	public void buildFotos(List<MultipartFile> files) {
+		this.fotos = files.stream().map(f -> new Foto(this, f))
+				.collect(Collectors.toList());
 	}
 	
 }

@@ -1,15 +1,13 @@
 package br.com.zup.mercadolivre.produtos;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +19,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,7 +31,6 @@ import br.com.zup.mercadolivre.databuilder.UsuarioBuilder;
 import br.com.zup.mercadolivre.security.TokenService;
 import br.com.zup.mercadolivre.usuarios.Usuario;
 
-@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
@@ -55,13 +50,18 @@ public class FotoProdutoApiTest {
 
 	@Autowired
 	private TokenService tokenService;
-
+	
+	@Test
 	public void deveRetornar403QuandoAcessarSemToken() throws Exception {
-		mockMvc.perform(put("/produtos/{id}/fotos", "1").contentType(MediaType.APPLICATION_JSON)).andDo(print())
+		mockMvc.perform(multipart("/produtos/{id}/fotos", "1")
+				.file(new MockMultipartFile("files", "teste.txt".getBytes()))
+				.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
 				.andExpect(status().isForbidden());
 	}
 
-	@Transactional
+	@Test
+	@Transactional	
 	public void deveRetornar403QuandoTentarAlterarProdutoDeOutroUsuario() throws Exception {
 		Usuario owner = new UsuarioBuilder().comLogin("owner@email.com").comSenha("123456").constroi();
 		em.persist(owner);
@@ -76,14 +76,16 @@ public class FotoProdutoApiTest {
 
 		String token = getToken(emailHacker, senhaHacker);
 
-		mockMvc.perform(
-				put("/produtos/{id}/fotos", String.valueOf(produto.getId())).contentType(MediaType.APPLICATION_JSON)
-						.header("Authorization", "Bearer " + token).content(objectMapper.writeValueAsString(produto)))
+		mockMvc.perform(multipart("/produtos/{id}/fotos", produto.getId())
+					.file(new MockMultipartFile("files", "teste.txt".getBytes()))
+					.contentType(MediaType.APPLICATION_JSON)
+					.header("Authorization", "Bearer " + token).content(objectMapper.writeValueAsString(produto)))
 				.andDo(print()).andExpect(status().isForbidden());
 	}
 
+	@Test
 	@Transactional
-	public void deveRetornar200QuandoTentarAlterarProduto() throws Exception {
+	public void deveCadastrarAsFotosDoProduto() throws Exception {
 		String email = "owner@email.com";
 		String senha = "123456";
 
@@ -95,37 +97,22 @@ public class FotoProdutoApiTest {
 
 		String token = getToken(email, senha);
 
-		mockMvc.perform(
-				put("/produtos/{id}/fotos", String.valueOf(produto.getId()))
+		mockMvc.perform(multipart("/produtos/{id}/fotos", produto.getId())
+					.file(new MockMultipartFile("files", "teste1.png".getBytes()))
+					.file(new MockMultipartFile("files", "teste2.png".getBytes()))
+					.file(new MockMultipartFile("files", "teste3.png".getBytes()))
 					.contentType(MediaType.APPLICATION_JSON)
 					.header("Authorization", "Bearer " + token)
 				)
 				.andDo(print())
 				.andExpect(status().isOk());
-	}
-
-	
-	@Transactional
-	public void deveAtualizarUmProdutoComSuasFotos() throws Exception {
-		String email = "owner@email.com";
-		String senha = "123456";
-
-		Usuario owner = new UsuarioBuilder().comLogin(email).comSenha(senha).constroi();
-
-		em.persist(owner);
-
-		Produto produto = criaProduto(owner, getCategoria());
-
-		String token = getToken(email, senha);
 		
-		mockMvc.perform(
-					put("/produtos/{id}/fotos", produto.getId())
-					.header("Authorization", "Bearer "+token)
-				)
-				.andDo(print())
-				.andExpect(status().isOk());
+		Query query = em.createQuery("select f from Foto f where f.produto = :produto");
+		query.setParameter("produto", produto);
+		
+		var fotos = query.getResultList();
+		assertTrue(fotos.size() == 3);
 	}	
-	
 	
 	private Categoria getCategoria() {
 		Categoria categoria = new Categoria("Categoria 1");
