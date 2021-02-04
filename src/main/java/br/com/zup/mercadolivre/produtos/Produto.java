@@ -1,6 +1,7 @@
 package br.com.zup.mercadolivre.produtos;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,6 +24,8 @@ import org.springframework.util.Assert;
 import br.com.zup.mercadolivre.caracteristicas.Caracteristica;
 import br.com.zup.mercadolivre.caracteristicas.CaractesticasProdutoRequest;
 import br.com.zup.mercadolivre.categorias.Categoria;
+import br.com.zup.mercadolivre.opnioes.NovaOpiniaoProdutoRequest;
+import br.com.zup.mercadolivre.opnioes.Opiniao;
 import br.com.zup.mercadolivre.usuarios.Usuario;
 
 @Entity
@@ -58,6 +62,10 @@ public class Produto {
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
 	private List<Foto> fotos;
 	
+	@Valid
+	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
+	private List<Opiniao> opnioes = new ArrayList<>();
+	
 	@Deprecated
 	public Produto() {}
 	
@@ -76,10 +84,41 @@ public class Produto {
 		
 	}	
 
-	private List<Caracteristica> buildCaracteristicas(List<CaractesticasProdutoRequest> caracteristicas) {
-		return caracteristicas.stream()
-				.map(c -> c.toModel(this))
-				.collect(Collectors.toList());
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((descricao == null) ? 0 : descricao.hashCode());
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result + ((valor == null) ? 0 : valor.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Produto other = (Produto) obj;
+		if (descricao == null) {
+			if (other.descricao != null)
+				return false;
+		} else if (!descricao.equals(other.descricao))
+			return false;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
+		if (valor == null) {
+			if (other.valor != null)
+				return false;
+		} else if (!valor.equals(other.valor))
+			return false;
+		return true;
 	}
 
 	public Long getId() {
@@ -94,5 +133,15 @@ public class Produto {
 		this.fotos = links.stream().map(l -> new Foto(this, l))
 				.collect(Collectors.toList());		
 	}
+
+	public void associarOpiniao(NovaOpiniaoProdutoRequest request, Usuario usuario) {
+		this.opnioes.add(request.toModel(this, usuario));		
+	}
+	
+	private List<Caracteristica> buildCaracteristicas(List<CaractesticasProdutoRequest> caracteristicas) {
+		return caracteristicas.stream()
+				.map(c -> c.toModel(this))
+				.collect(Collectors.toList());
+	}	
 	
 }

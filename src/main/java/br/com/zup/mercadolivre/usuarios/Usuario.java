@@ -22,30 +22,62 @@ public class Usuario {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Email
 	@NotBlank
 	@Column(unique = true)
 	private String login;
-	
+
 	@NotBlank
 	@Size(min = 6)
 	private String senha;
-	
+
 	@CreationTimestamp
 	private LocalDateTime cadastradoEm;
 
 	@Deprecated
-	public Usuario() {}
-	
+	public Usuario() {
+	}
+
 	public Usuario(@NotBlank @Email String login, @NotBlank @Size(min = 6) String senha) {
 		this.login = login;
 		this.senha = new BCryptPasswordEncoder().encode(senha);
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Usuario [id="+id+", login="+login+", senha="+senha+"]";
+		return "Usuario [id=" + id + ", login=" + login + ", senha=" + senha + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((login == null) ? 0 : login.hashCode());
+		result = prime * result + ((senha == null) ? 0 : senha.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Usuario other = (Usuario) obj;
+		if (login == null) {
+			if (other.login != null)
+				return false;
+		} else if (!login.equals(other.login))
+			return false;
+		if (senha == null) {
+			if (other.senha != null)
+				return false;
+		} else if (!senha.equals(other.senha))
+			return false;
+		return true;
 	}
 
 	public Long getId() {
@@ -59,5 +91,5 @@ public class Usuario {
 	public String getSenha() {
 		return senha;
 	}
-	
+
 }
