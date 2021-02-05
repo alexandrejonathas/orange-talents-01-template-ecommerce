@@ -2,7 +2,6 @@ package br.com.zup.mercadolivre.pedidos;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 import br.com.zup.mercadolivre.produtos.Produto;
 import br.com.zup.mercadolivre.validation.IdExists;
@@ -14,7 +13,6 @@ public class ProdutoPedidoRequest {
 	private Long produtoId;
 
 	@Min(1)
-	@Positive
 	@NotNull
 	private Integer quantidade;
 
