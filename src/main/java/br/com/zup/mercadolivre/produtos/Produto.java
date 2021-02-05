@@ -24,58 +24,60 @@ import org.springframework.util.Assert;
 import br.com.zup.mercadolivre.caracteristicas.Caracteristica;
 import br.com.zup.mercadolivre.caracteristicas.CaractesticasProdutoRequest;
 import br.com.zup.mercadolivre.categorias.Categoria;
-import br.com.zup.mercadolivre.opnioes.NovaOpiniaoProdutoRequest;
-import br.com.zup.mercadolivre.opnioes.Opiniao;
+import br.com.zup.mercadolivre.fotos.Foto;
+import br.com.zup.mercadolivre.opinioes.NovaOpiniaoProdutoRequest;
+import br.com.zup.mercadolivre.opinioes.Opiniao;
 import br.com.zup.mercadolivre.perguntas.Pergunta;
 import br.com.zup.mercadolivre.usuarios.Usuario;
 
 @Entity
 @Table(name = "produtos")
-public class Produto{
+public class Produto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@NotBlank 
+
+	@NotBlank
 	private String nome;
-	
-	@NotNull 
-	private BigDecimal valor; 
-	
-	@NotNull 
-	@Min(0) 
+
+	@NotNull
+	private BigDecimal valor;
+
+	@NotNull
+	@Min(0)
 	private Integer quantidade;
-	
-	@NotBlank 
-	@Size(max = 1000) 
-	private String descricao; 
-	
+
+	@NotBlank
+	@Size(max = 1000)
+	private String descricao;
+
 	@NotNull
 	@ManyToOne
 	private Usuario usuario;
-	
+
 	@NotNull
 	@ManyToOne
 	private Categoria categoria;
 
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
-	private List<Caracteristica> caracteristicas;
-	
+	private List<Caracteristica> caracteristicas = new ArrayList<>();
+
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
-	private List<Foto> fotos;
-	
+	private List<Foto> fotos = new ArrayList<>();
+
 	@Valid
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
-	private List<Opiniao> opnioes = new ArrayList<>();
-	
+	private List<Opiniao> opinioes = new ArrayList<>();
+
 	@Valid
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.PERSIST)
-	private List<Pergunta> perguntas = new ArrayList<>();	
-	
+	private List<Pergunta> perguntas = new ArrayList<>();
+
 	@Deprecated
-	public Produto() {}
-	
+	public Produto() {
+	}
+
 	public Produto(@NotBlank String nome, @NotNull BigDecimal valor, @NotNull @Size(min = 0) Integer quantidade,
 			@NotBlank @Size(max = 1000) String descricao, Usuario usuario, Categoria categoria,
 			List<CaractesticasProdutoRequest> caracteristicas) {
@@ -86,10 +88,10 @@ public class Produto{
 		this.usuario = usuario;
 		this.categoria = categoria;
 		this.caracteristicas = buildCaracteristicas(caracteristicas);
-		
+
 		Assert.isTrue(caracteristicas.size() >= 3, "O produto precisa ter no mínimo 3 caracteristicas");
-		
-	}	
+
+	}
 
 	@Override
 	public int hashCode() {
@@ -100,7 +102,15 @@ public class Produto{
 		result = prime * result + ((valor == null) ? 0 : valor.hashCode());
 		return result;
 	}
+	
+	public void associaLinks(List<String> links) {
+		this.fotos = links.stream().map(l -> new Foto(this, l)).collect(Collectors.toList());
+	}
 
+	public void associarOpiniao(NovaOpiniaoProdutoRequest request, Usuario usuario) {
+		this.opinioes.add(request.toModel(this, usuario));
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -136,20 +146,48 @@ public class Produto{
 		return nome;
 	}
 
-	public void associaLinks(List<String> links) {
-		this.fotos = links.stream().map(l -> new Foto(this, l))
-				.collect(Collectors.toList());		
+	public String getDescricao() {
+		return descricao;
 	}
 
-	public void associarOpiniao(NovaOpiniaoProdutoRequest request, Usuario usuario) {
-		this.opnioes.add(request.toModel(this, usuario));		
+	public BigDecimal getValor() {
+		return valor;
+	}
+
+	public Integer getQuantidade() {
+		return quantidade;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public Categoria getCategoria() {
+		return categoria;
+	}
+
+	public List<Caracteristica> getCaracteristicas() {
+		return caracteristicas;
+	}
+
+	public List<Foto> getFotos() {
+		return fotos;
+	}
+
+	public List<Opiniao> getOpinioes() {
+		return opinioes;
+	}
+
+	public List<Pergunta> getPerguntas() {
+		return perguntas;
 	}
 	
 	private List<Caracteristica> buildCaracteristicas(List<CaractesticasProdutoRequest> caracteristicas) {
-		return caracteristicas.stream()
-				.map(c -> c.toModel(this))
-				.collect(Collectors.toList());
+		return caracteristicas.stream().map(c -> c.toModel(this)).collect(Collectors.toList());
 	}
-	
-	
+
+	public void baixaEstoque(Integer quantidade) {
+		Assert.isTrue(quantidade < this.quantidade, "A quantidade da requisição não pode ser maior que a disponível");
+		this.quantidade -= quantidade; 		
+	}
 }

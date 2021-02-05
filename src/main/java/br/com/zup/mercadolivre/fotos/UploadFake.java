@@ -1,4 +1,4 @@
-package br.com.zup.mercadolivre.produtos;
+package br.com.zup.mercadolivre.fotos;
 
 import java.util.List;
 import java.util.UUID;

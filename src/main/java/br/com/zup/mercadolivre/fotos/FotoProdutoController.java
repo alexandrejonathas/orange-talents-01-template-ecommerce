@@ -1,4 +1,4 @@
-package br.com.zup.mercadolivre.produtos;
+package br.com.zup.mercadolivre.fotos;
 
 import java.util.List;
 
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.zup.mercadolivre.produtos.Produto;
 import br.com.zup.mercadolivre.security.CheckSecurity;
 
 @RestController

@@ -1,4 +1,4 @@
-package br.com.zup.mercadolivre.opnioes;
+package br.com.zup.mercadolivre.opinioes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

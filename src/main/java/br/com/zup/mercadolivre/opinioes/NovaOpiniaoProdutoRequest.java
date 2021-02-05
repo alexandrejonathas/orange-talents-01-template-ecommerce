@@ -1,4 +1,4 @@
-package br.com.zup.mercadolivre.opnioes;
+package br.com.zup.mercadolivre.opinioes;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

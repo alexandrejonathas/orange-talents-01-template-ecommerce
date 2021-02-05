@@ -31,8 +31,8 @@ import br.com.zup.mercadolivre.databuilder.CategoriaBuilder;
 import br.com.zup.mercadolivre.databuilder.NovaOpiniaoProdutoRequestBuilder;
 import br.com.zup.mercadolivre.databuilder.ProdutoBuilder;
 import br.com.zup.mercadolivre.databuilder.UsuarioBuilder;
-import br.com.zup.mercadolivre.opnioes.NovaOpiniaoProdutoRequest;
-import br.com.zup.mercadolivre.opnioes.Opiniao;
+import br.com.zup.mercadolivre.opinioes.NovaOpiniaoProdutoRequest;
+import br.com.zup.mercadolivre.opinioes.Opiniao;
 import br.com.zup.mercadolivre.security.TokenService;
 import br.com.zup.mercadolivre.usuarios.Usuario;
 

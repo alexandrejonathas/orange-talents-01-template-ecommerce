@@ -41,6 +41,9 @@ public class Pergunta {
 	@CreationTimestamp
 	private LocalDateTime instante;
 
+	@Deprecated
+	public Pergunta() {}
+	
 	public Pergunta(@NotBlank String titulo, @NotNull Produto produto, @NotNull Usuario interessado) {
 		this.titulo = titulo;
 		this.produto = produto;

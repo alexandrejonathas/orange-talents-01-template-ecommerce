@@ -1,4 +1,4 @@
-package br.com.zup.mercadolivre.opnioes;
+package br.com.zup.mercadolivre.opinioes;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,6 +42,9 @@ public class Opiniao {
 	@ManyToOne
 	private Usuario usuario;	
 	
+	@Deprecated
+	public Opiniao() {}
+	
 	public Opiniao(@NotBlank String titulo, @NotBlank @Size(max = 500) String descricao,
 			@NotNull @Min(1) @Max(5) Integer nota, Produto produto, Usuario usuario) {
 		this.titulo = titulo;
@@ -49,6 +52,18 @@ public class Opiniao {
 		this.nota = nota;
 		this.produto = produto;
 		this.usuario = usuario;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public Integer getNota() {
+		return nota;
 	}
 
 	public Usuario getUsuario() {

@@ -1,6 +1,6 @@
 package br.com.zup.mercadolivre.databuilder;
 
-import br.com.zup.mercadolivre.opnioes.NovaOpiniaoProdutoRequest;
+import br.com.zup.mercadolivre.opinioes.NovaOpiniaoProdutoRequest;
 
 public class NovaOpiniaoProdutoRequestBuilder {
 

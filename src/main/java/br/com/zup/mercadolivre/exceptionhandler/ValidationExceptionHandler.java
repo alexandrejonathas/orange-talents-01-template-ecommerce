@@ -36,7 +36,7 @@ public class ValidationExceptionHandler {
 		var fieldErrors = ex.getBindingResult().getFieldErrors();
 
 		return buildValidationErrorOutput(globalErrors, fieldErrors);
-	}	
+	}		
 	
 	private ValidationErrorOutput buildValidationErrorOutput(List<ObjectError> globalErrors, 
 			List<FieldError> fieldErrors) {
