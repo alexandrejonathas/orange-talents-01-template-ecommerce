@@ -65,5 +65,9 @@ public class Pedido {
 		}
 		return items.get(0).getDono();
 	}
+
+	public List<PedidoItem> getItems() {
+		return items;
+	}
 	
 }

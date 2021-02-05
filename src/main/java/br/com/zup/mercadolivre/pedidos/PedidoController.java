@@ -57,15 +57,15 @@ public class PedidoController {
 		Pedido pedido = request.toModel(em, comprador);
 		em.persist(pedido);
 		
-		Usuario dono = pedido.getDonoProduto();
-		
-		mailer.send(null, "Novo pedido #"+pedido.getIdentificadoPedido(), "Um novo pedido foi realizado", "contato@mercadolivre.com", dono.getLogin());
+		mailer.send(null, "Novo pedido #"+pedido.getIdentificadoPedido(), "Um novo pedido foi realizado", 
+				"contato@mercadolivre.com",  pedido.getDonoProduto().getLogin());
 		
 		String urlRetorno = uriBuilder.path("/pedidos/{identificadorPedido}/retorno")
 				.buildAndExpand(pedido.getIdentificadoPedido()).toString();
 		
-		return ResponseEntity.status(302).header(HttpHeaders.LOCATION, 
-				request.getFormaPagamento().getUrlRetorno(pedido.getIdentificadoPedido(), urlRetorno)).build();
+		return ResponseEntity.status(302)
+				.header(HttpHeaders.LOCATION, request.getFormaPagamento().getUrlRetorno(pedido.getIdentificadoPedido(), urlRetorno))
+				.build();
 	}
 	
 }

@@ -1,11 +1,15 @@
 package br.com.zup.mercadolivre.pedidos;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +91,12 @@ public class CadastraPedidoApi {
 		.andDo(print())
 		.andExpect(status().is3xxRedirection());
 		
+		Query query = em.createQuery("select p from Pedido p");
+		@SuppressWarnings("unchecked")
+		List<Pedido> pedidos = query.getResultList();
+		
+		assertTrue(pedidos.size() > 0);
+		assertTrue(pedidos.get(0).getItems().size() > 0);
 	}
 	
 	@Test
