@@ -19,6 +19,7 @@ import br.com.zup.mercadolivre.usuarios.Usuario;
 
 public class NovoPedidoRequest {
 
+	@NotNull
 	private FormaPagamento formaPagamento;
 	
 	@Valid

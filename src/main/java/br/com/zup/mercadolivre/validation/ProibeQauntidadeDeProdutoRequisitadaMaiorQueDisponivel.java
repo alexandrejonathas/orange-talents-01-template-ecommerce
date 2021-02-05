@@ -28,8 +28,11 @@ public class ProibeQauntidadeDeProdutoRequisitadaMaiorQueDisponivel implements V
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		if(errors.hasErrors()) {
+			return;
+		}
 		NovoPedidoRequest request = (NovoPedidoRequest) target;
-		List<Produto> produtos = getProdutos(request);
+		List<Produto> produtos = getProdutos(request.getProdutos());
 		
 		Set<ProdutoPedidoRequest> produtosInvalidos = request.buscaItemsComQuantidadeMaiorQueDisponivel(produtos);
 		if(!produtosInvalidos.isEmpty()) {
@@ -39,13 +42,11 @@ public class ProibeQauntidadeDeProdutoRequisitadaMaiorQueDisponivel implements V
 		}
 	}
 
-	private List<Produto> getProdutos(NovoPedidoRequest request) {
+	private List<Produto> getProdutos(List<ProdutoPedidoRequest> produtosRequest) {
 		List<Produto> produtos = new ArrayList<>();
-		for(ProdutoPedidoRequest pr : request.getProdutos()) {
+		for(ProdutoPedidoRequest pr : produtosRequest) {
 			Optional<Produto> produto = repository.findById(pr.getProdutoId());
-			if(produto.isPresent()) {				
-				produtos.add(produto.get());
-			}
+			produtos.add(produto.get());
 		}
 		return produtos;
 	}
