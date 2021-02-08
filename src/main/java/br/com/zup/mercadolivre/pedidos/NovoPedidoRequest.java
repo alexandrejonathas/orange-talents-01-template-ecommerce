@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
@@ -51,11 +52,16 @@ public class NovoPedidoRequest {
 		return new Pedido(usuario, items);		
 	}
 
-	public Set<ProdutoPedidoRequest> buscaItemsComQuantidadeMaiorQueDisponivel(List<Produto> produtosDisponiveis) {
+	public Set<ProdutoPedidoRequest> buscaItemsComQuantidadeMaiorQueDisponivel(EntityManager em) {
 		Set<ProdutoPedidoRequest> produtosInvalidos = new HashSet<ProdutoPedidoRequest>();
-		for(Produto pd : produtosDisponiveis) {
-			produtosInvalidos = this.produtos.stream()
-					.filter(pr -> pr.getQuantidade() > pd.getQuantidade()).collect(Collectors.toSet());
+		for(ProdutoPedidoRequest produtoRequest : produtos) {
+			Produto produto = em.find(Produto.class, produtoRequest.getProdutoId());
+			
+			Assert.state(produto != null, "Deve ser passado um id de produto existente");
+			
+			if(produtoRequest.getQuantidade() > produto.getQuantidade()) {
+				produtosInvalidos.add(produtoRequest);
+			}
 		}
 		return produtosInvalidos;
 	}
